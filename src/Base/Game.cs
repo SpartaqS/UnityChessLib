@@ -108,7 +108,7 @@ namespace UnityChess {
 			return result;
 		}
 		
-		internal static Dictionary<Piece, Dictionary<(Square, Square), Movement>> CalculateLegalMovesForPosition(
+		public static Dictionary<Piece, Dictionary<(Square, Square), Movement>> CalculateLegalMovesForPosition(
 			Board board,
 			GameConditions gameConditions
 		) {
