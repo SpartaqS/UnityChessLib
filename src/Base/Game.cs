@@ -11,13 +11,16 @@ namespace UnityChess {
 		/// <summary>Creates a Game instance of a given mode with a standard starting Board.</summary>
 		public Game() : this(GameConditions.NormalStartingConditions, Board.StartingPositionPieces) { }
 
-		public Game(GameConditions startingConditions, params (Square, Piece)[] squarePiecePairs) {
-			Board startingBoard = new Board(squarePiecePairs);
-			BoardTimeline = new Timeline<Board> { startingBoard };
+		public Game(GameConditions startingConditions, params (Square, Piece)[] squarePiecePairs) : this(startingConditions, new Board(squarePiecePairs)) {	}
+
+		public Game(GameConditions startingConditions, Board startingBoard)
+		{
+			Board newStartingBoard = new Board(startingBoard);
+			BoardTimeline = new Timeline<Board> { newStartingBoard };
 			HalfMoveTimeline = new Timeline<HalfMove>();
 			ConditionsTimeline = new Timeline<GameConditions> { startingConditions };
 			LegalMovesTimeline = new Timeline<Dictionary<Piece, Dictionary<(Square, Square), Movement>>> {
-				CalculateLegalMovesForPosition(startingBoard, startingConditions)
+				CalculateLegalMovesForPosition(newStartingBoard, startingConditions)
 			};
 		}
 
@@ -26,6 +29,10 @@ namespace UnityChess {
 			if (!TryGetLegalMove(move.Start, move.End, out Movement validatedMove)) {
 				return false;
 			}
+
+			// if the SpecialMove was deemed valid, save its special properties
+			if (validatedMove is SpecialMove)
+				validatedMove = move;
 
 			//create new copy of previous current board, and execute the move on it
 			BoardTimeline.TryGetCurrent(out Board boardBeforeMove);
@@ -84,7 +91,7 @@ namespace UnityChess {
 		}
 
 		public bool ResetGameToHalfMoveIndex(int halfMoveIndex) {
-			if (HalfMoveTimeline.HeadIndex == -1) {
+			if (HalfMoveTimeline.HeadIndex == -2) { // changed from -1 to -2 so AI_MinMax can step back after the first move of the evaluated board
 				return false;
 			}
 
