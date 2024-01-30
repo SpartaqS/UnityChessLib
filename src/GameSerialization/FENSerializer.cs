@@ -90,6 +90,11 @@ namespace UnityChess {
 			return string.Join("/", rankStrings);
 		}
 
+		public static string GetBoardString(Board board)
+		{
+			return CalculateBoardString(board);
+		}
+
 		private static Piece GetPieceFromFENSymbol(string character) {
 			string loweredSymbol = character.ToLower();
 			Side side = loweredSymbol == character
