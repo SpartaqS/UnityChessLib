@@ -94,6 +94,11 @@ namespace UnityChess {
 			if (position.Rank != enPassantCaptureRank) {
 				return;
 			}
+			//only allow capturing adjacent Pawns using enPassant
+			int fileDifference = enPassantEligibleSquare.File - position.File;
+			if (fileDifference != -1 && fileDifference != 1) {
+				return;
+			}
 
 			Square capturedPawnSquare = enPassantEligibleSquare + new Square(0, -Owner.ForwardDirection());
 			if (capturedPawnSquare.IsValid()
