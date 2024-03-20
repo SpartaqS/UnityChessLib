@@ -44,7 +44,8 @@
 			IsCastlingMove = isCastlingMove;
 			IsEnPassantMove = isEnPassantMove;
 			IsPromotionMove = isPromotionMove;
-			PromotionPiece = null;
+			PromotionPiece = ElectedPiece.None;
+			PromotionPieceSide = Side.None;
 		}
 
 		public void HandleAssociatedPiece(Board board) {
@@ -144,7 +145,8 @@
 
 		#region PromotionMove
 
-		public Piece PromotionPiece { get; private set; }
+		public ElectedPiece PromotionPiece { get; private set; }
+		public Side PromotionPieceSide { get; private set; }
 
 		/// <summary>Creates a new PromotionMove instance; inherits from SpecialMove.</summary>
 		/// <param name="pawnPosition">Position of the promoting pawn.</param>
@@ -161,7 +163,7 @@
 		/// <param name="board">Board on which the move is being made.</param>
 		private void HandleAssociatedPiecePromotionMove(Board board)
 		{
-			if (PromotionPiece == null)
+			if (PromotionPiece == ElectedPiece.None)
 			{
 				throw new System.ArgumentNullException(
 					$"{nameof(HandleAssociatedPiece)}:\n"
@@ -171,12 +173,13 @@
 				);
 			}
 
-			board[End] = PromotionPiece;
+			board[End] = PromotionUtil.GeneratePromotionPiece(PromotionPiece,PromotionPieceSide);
 		}
 
 		public void SetPromotionPiece(Piece promotionPiece)
 		{
-			PromotionPiece = promotionPiece;
+			PromotionPiece = PromotionUtil.ReadElectedPieceFromPiece(promotionPiece);
+			PromotionPieceSide = promotionPiece.Owner;
 		}
 
 		#endregion

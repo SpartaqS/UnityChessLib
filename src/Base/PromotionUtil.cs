@@ -7,5 +7,14 @@
 			ElectedPiece.Rook => new Rook(side),
 			_ => null
 		};
+
+		public static ElectedPiece ReadElectedPieceFromPiece(Piece election) => election switch
+		{
+			Bishop => ElectedPiece.Bishop,
+			Knight => ElectedPiece.Knight,
+			Queen => ElectedPiece.Queen,
+			Rook => ElectedPiece.Rook,
+			_ => ElectedPiece.None
+		};
 	}
 }
