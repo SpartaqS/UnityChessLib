@@ -31,7 +31,7 @@ namespace UnityChess {
 			}
 
 			// if the SpecialMove was deemed valid, save its special properties
-			if (validatedMove is SpecialMove)
+			if (validatedMove.IsSpecialMove)
 				validatedMove = move;
 
 			//create new copy of previous current board, and execute the move on it
@@ -66,7 +66,7 @@ namespace UnityChess {
 		}
 
 		public bool TryGetLegalMove(Square startSquare, Square endSquare, out Movement move) {
-			move = Movement.InvalidtMove();
+			move = Movement.InvalidMove();
 
 			return BoardTimeline.TryGetCurrent(out Board currentBoard)
 			       && LegalMovesTimeline.TryGetCurrent(out Dictionary<Piece, Dictionary<(Square, Square), Movement>> currentLegalMoves)

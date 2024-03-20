@@ -47,12 +47,13 @@
 			PromotionPiece = null;
 		}
 
-		public void HandleAssociatedPiece(Board board) { 
+		public void HandleAssociatedPiece(Board board) {
 			if (IsCastlingMove)
 			{
 				HandleAssociatedPieceCastlingMove(board);
 			}
-			else if(IsEnPassantMove) {
+			else if (IsEnPassantMove)
+			{
 				HandleAssociatedPieceEnPassant(board);
 			}
 			else if (IsPromotionMove)
@@ -64,7 +65,10 @@
 			{
 				throw new System.Exception("HandleAssociatedPiece called without specifying what kind of special move it is");
 			}
-			throw new System.Exception("HandleAssociatedPiece called on a non-special move");
+			else if (!IsSpecialMove)
+			{
+				throw new System.Exception("HandleAssociatedPiece called on a non-special move");
+			}
 		}
 
 		#region CastlingMove
@@ -177,9 +181,18 @@
 
 		#endregion
 
-		public static Movement InvalidtMove()
+		public static Movement InvalidMove()
 		{
 			return new Movement(Square.Invalid, Square.Invalid, Square.Invalid);
+		}
+		public static bool operator ==(Movement m1, Movement m2)
+		{
+			return m1.Equals(m2);
+		}
+
+		public static bool operator !=(Movement m1, Movement m2)
+		{
+			return !m1.Equals(m2);
 		}
 	}
 
@@ -192,4 +205,6 @@
 			this.StoredMovement = movement;
 		}
 	}
+
+
 }

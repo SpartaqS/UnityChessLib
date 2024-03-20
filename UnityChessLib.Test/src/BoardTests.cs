@@ -31,17 +31,18 @@ namespace UnityChess.Test {
 			Assert.AreEqual(null, board[pawnStartSquare]);
 		}
 
-		[Test]
-		public void MovePiece_SpecialMove_HandleAssocPieceCalled() {
-			Mock<MovementHolderClass> mockSpecialMove = new( new Movement(
-				new Square(1, 2),
-				new Square(1, 3) )
-			);
+		// this fails because Movememnt.HandleAssociatedPiece(board) is not virtual, and it won't be virtual
+		//[Test]
+		//public void MovePiece_SpecialMove_HandleAssocPieceCalled() {
+		//	Mock<MovementHolderClass> mockSpecialMove = new( new Movement(
+		//		new Square(1, 2),
+		//		new Square(1, 3) )
+		//	);
 
-			board.MovePiece(mockSpecialMove.Object.StoredMovement);
+		//	board.MovePiece(mockSpecialMove.Object.StoredMovement);
 
-			mockSpecialMove.Verify(specialMove => specialMove.StoredMovement.HandleAssociatedPiece(board), Times.Exactly(1));
-		}
+		//	mockSpecialMove.Verify(specialMove => specialMove.StoredMovement.HandleAssociatedPiece(board), Times.Exactly(1));
+		//}
 
 		[Test]
 		[TestCase(Side.White)]
