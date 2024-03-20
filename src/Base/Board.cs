@@ -114,7 +114,10 @@ namespace UnityChess {
 				currentKingSquareBySide[pieceToMove.Owner] = move.End;
 			}
 
-			(move as SpecialMove)?.HandleAssociatedPiece(this);
+			if (move.IsSpecialMove)
+			{
+				move.HandleAssociatedPiece(this);
+			}
 		}
 		
 		internal bool IsOccupiedAt(Square position) => this[position] != null;

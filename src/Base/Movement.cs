@@ -32,8 +32,9 @@
 
 		// results of converting class to struct:
 		public readonly bool IsSpecialMove;
+		public readonly Square SpecialMoveSquare;
 
-		public Movement(Square piecePosition, Square end, Square specialMoveSquare, bool isSpecialMove = false, bool isCastlingMove = false)
+		public Movement(Square piecePosition, Square end, Square specialMoveSquare, bool isSpecialMove = false, bool isCastlingMove = false, bool isEnPassantMove = false, bool isPromotionMove = false)
 		{
 			Start = piecePosition;
 			End = end;
@@ -41,6 +42,9 @@
 			SpecialMoveSquare = specialMoveSquare;
 			// set special move type based on needs
 			IsCastlingMove = isCastlingMove;
+			IsEnPassantMove = isEnPassantMove;
+			IsPromotionMove = isPromotionMove;
+			PromotionPiece = null;
 		}
 
 		public void HandleAssociatedPiece(Board board) { 
@@ -48,23 +52,38 @@
 			{
 				HandleAssociatedPieceCastlingMove(board);
 			}
+			else if(IsEnPassantMove) {
+				HandleAssociatedPieceEnPassant(board);
+			}
+			else if (IsPromotionMove)
+			{
+				HandleAssociatedPiecePromotionMove(board);
+			}
+
 			else if (IsSpecialMove)
 			{
-
+				throw new System.Exception("HandleAssociatedPiece called without specifying what kind of special move it is");
 			}
-			throw new System.Exception("HandleAssociatedPiece called without specifying what kind of special move it is");
+			throw new System.Exception("HandleAssociatedPiece called on a non-special move");
 		}
 
 		#region CastlingMove
+		/// <summary>Creates a new CastlingMove instance.</summary>
+		/// <param name="kingPosition">Position of the king to be castled.</param>
+		/// <param name="end">Square on which the king will land on.</param>
+		/// <param name="rookSquare">The square of the rook associated with the castling move.</param>
 		public static Movement CastlingMove(Square kingPosition, Square end, Square rookSquare)
 		{
 			return new Movement(kingPosition, end, rookSquare, true, true);
 		}
 
 		public readonly bool IsCastlingMove;
-		public readonly Square SpecialMoveSquare;
+
 		public readonly Square RookSquare => SpecialMoveSquare;
-		public void HandleAssociatedPieceCastlingMove(Board board)
+
+		/// <summary>Handles moving the associated rook to the correct position on the board.</summary>
+		/// <param name="board">Board on which the move is being made.</param>
+		private void HandleAssociatedPieceCastlingMove(Board board)
 		{
 			if (board[RookSquare] is Rook rook)
 			{
@@ -95,5 +114,82 @@
 		}
 
 		#endregion
+
+		#region EnPassantMove
+
+
+		/// <summary>Creates a new EnPassantMove instance; inherits from SpecialMove.</summary>
+		/// <param name="attackingPawnPosition">Position of the attacking pawn.</param>
+		/// <param name="end">Square on which the attacking pawn will land on.</param>
+		/// <param name="capturedPawnSquare">Square of the pawn that is being captured via en passant.</param>
+		public static Movement EnPassantMove(Square attackingPawnPosition, Square end, Square capturedPawnSquare)
+		{
+			return new Movement(attackingPawnPosition, end, capturedPawnSquare, true, false, true);
+		}
+
+		public readonly bool IsEnPassantMove;
+
+		public readonly Square CapturedPawnSquare => SpecialMoveSquare;
+
+		private void HandleAssociatedPieceEnPassant(Board board)
+		{
+			board[CapturedPawnSquare] = null;
+		}
+
+		#endregion
+
+		#region PromotionMove
+
+		public Piece PromotionPiece { get; private set; }
+
+		/// <summary>Creates a new PromotionMove instance; inherits from SpecialMove.</summary>
+		/// <param name="pawnPosition">Position of the promoting pawn.</param>
+		/// <param name="end">Square which the promoting pawn is landing on.</param>
+		public static Movement PromotionMove(Square pawnPosition, Square end)
+		{
+			return new Movement(pawnPosition, end, end, true, false, false, true);
+		}
+
+		public readonly bool IsPromotionMove;
+
+
+		/// <summary>Handles replacing the promoting pawn with the elected promotion piece.</summary>
+		/// <param name="board">Board on which the move is being made.</param>
+		private void HandleAssociatedPiecePromotionMove(Board board)
+		{
+			if (PromotionPiece == null)
+			{
+				throw new System.ArgumentNullException(
+					$"{nameof(HandleAssociatedPiece)}:\n"
+					+ $"{nameof(PromotionMove)}.{nameof(PromotionPiece)} was null.\n"
+					+ $"You must first call {nameof(PromotionMove)}.{nameof(SetPromotionPiece)}"
+					+ $" before it can be executed."
+				);
+			}
+
+			board[End] = PromotionPiece;
+		}
+
+		public void SetPromotionPiece(Piece promotionPiece)
+		{
+			PromotionPiece = promotionPiece;
+		}
+
+		#endregion
+
+		public static Movement InvalidtMove()
+		{
+			return new Movement(Square.Invalid, Square.Invalid, Square.Invalid);
+		}
+	}
+
+	public class MovementHolderClass
+	{
+		public Movement StoredMovement;
+
+		public MovementHolderClass(Movement movement)
+		{
+			this.StoredMovement = movement;
+		}
 	}
 }

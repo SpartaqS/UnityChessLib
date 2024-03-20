@@ -83,7 +83,7 @@ namespace UnityChess {
 				Square inBetweenSquare0 = new Square(checkingQueenside ? 4 : 6, castlingRank);
 				Square inBetweenSquare1 = new Square(checkingQueenside ? 3 : 7, castlingRank);
 				Square inBetweenSquare2 = new Square(2, castlingRank);
-				Movement castlingMove = new CastlingMove(position, inBetweenSquare1, rookSquare);
+				Movement castlingMove = Movement.CastlingMove(position, inBetweenSquare1, rookSquare);
 				
 				if (!board.IsOccupiedAt(inBetweenSquare0)
 				    && !board.IsOccupiedAt(inBetweenSquare1)
@@ -97,7 +97,7 @@ namespace UnityChess {
 					}
 
 					movesByStartEndSquare[(position, inBetweenSquare1)]
-						= new CastlingMove(position, inBetweenSquare1, rookSquare);
+						= Movement.CastlingMove(position, inBetweenSquare1, rookSquare);
 				}
 			}
 		}

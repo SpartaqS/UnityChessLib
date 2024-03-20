@@ -33,14 +33,14 @@ namespace UnityChess.Test {
 
 		[Test]
 		public void MovePiece_SpecialMove_HandleAssocPieceCalled() {
-			Mock<SpecialMove> mockSpecialMove = new(
+			Mock<MovementHolderClass> mockSpecialMove = new( new Movement(
 				new Square(1, 2),
-				new Square(1, 3)
+				new Square(1, 3) )
 			);
 
-			board.MovePiece(mockSpecialMove.Object);
+			board.MovePiece(mockSpecialMove.Object.StoredMovement);
 
-			mockSpecialMove.Verify(specialMove => specialMove.HandleAssociatedPiece(board), Times.Exactly(1));
+			mockSpecialMove.Verify(specialMove => specialMove.StoredMovement.HandleAssociatedPiece(board), Times.Exactly(1));
 		}
 
 		[Test]

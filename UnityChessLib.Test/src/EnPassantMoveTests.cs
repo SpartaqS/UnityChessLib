@@ -15,7 +15,7 @@ namespace UnityChess.Test {
 		public void HandleAssociatedPiece_EnPassantMove_AssocPawnIsRemoved() {
 			Square capturedPawnSquare = new Square(1, 2);
 			board[capturedPawnSquare] = new Pawn(Side.White);
-			EnPassantMove enPassantMove = new EnPassantMove(Square.Invalid, Square.Invalid, capturedPawnSquare);
+			Movement enPassantMove = Movement.EnPassantMove(Square.Invalid, Square.Invalid, capturedPawnSquare);
 
 			enPassantMove.HandleAssociatedPiece(board);
 

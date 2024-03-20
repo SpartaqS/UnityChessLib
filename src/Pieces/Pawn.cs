@@ -39,7 +39,7 @@ namespace UnityChess {
 
 					bool amOnEnemyPawnRank = position.Rank == Owner.Complement().PawnRank();
 					movesByStartEndSquares[(position, endSquare)] = amOnEnemyPawnRank
-						? new PromotionMove(position, endSquare)
+						? Movement.PromotionMove(position, endSquare)
 						: new Movement(position, endSquare);
 				}
 				
@@ -78,7 +78,7 @@ namespace UnityChess {
 
 					bool amOnEnemyPawnRank = position.Rank == Owner.Complement().PawnRank();
 					movesByStartEndSquares[(testMove.Start, testMove.End)] = amOnEnemyPawnRank
-						? new PromotionMove(position, endSquare)
+						? Movement.PromotionMove(position, endSquare)
 						: new Movement(testMove);
 				}
 			}
@@ -99,13 +99,13 @@ namespace UnityChess {
 			if (capturedPawnSquare.IsValid()
 			    && board[capturedPawnSquare] is Pawn capturedPawn
 			    && capturedPawn.Owner != Owner
-			    && Rules.MoveObeysRules(board, new EnPassantMove(position, enPassantEligibleSquare, capturedPawnSquare), Owner)
+			    && Rules.MoveObeysRules(board, Movement.EnPassantMove(position, enPassantEligibleSquare, capturedPawnSquare), Owner)
 			) {
 				if (movesByStartEndSquares == null) {
 					movesByStartEndSquares = new Dictionary<(Square, Square), Movement>();
 				}
 
-				movesByStartEndSquares[(position, enPassantEligibleSquare)] = new EnPassantMove(
+				movesByStartEndSquares[(position, enPassantEligibleSquare)] = Movement.EnPassantMove(
 					position,
 					enPassantEligibleSquare,
 					capturedPawnSquare

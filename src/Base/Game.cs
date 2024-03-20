@@ -36,7 +36,7 @@ namespace UnityChess {
 			ConditionsTimeline.TryGetCurrent(out GameConditions conditionsBeforeMove); 
 			Side updatedSideToMove = conditionsBeforeMove.SideToMove.Complement();
 			bool causedCheck = Rules.IsPlayerInCheck(resultingBoard, updatedSideToMove);
-			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove is EnPassantMove;
+			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove.IsEnPassantMove;
 			
 			HalfMove halfMove = new HalfMove(boardBeforeMove[validatedMove.Start], validatedMove, capturedPiece, causedCheck);
 			GameConditions resultingGameConditions = conditionsBeforeMove.CalculateEndingConditions(boardBeforeMove, halfMove);
@@ -59,7 +59,7 @@ namespace UnityChess {
 		}
 
 		public bool TryGetLegalMove(Square startSquare, Square endSquare, out Movement move) {
-			move = null;
+			move = Movement.InvalidtMove();
 
 			return BoardTimeline.TryGetCurrent(out Board currentBoard)
 			       && LegalMovesTimeline.TryGetCurrent(out Dictionary<Piece, Dictionary<(Square, Square), Movement>> currentLegalMoves)
@@ -108,7 +108,7 @@ namespace UnityChess {
 			return result;
 		}
 		
-		internal static Dictionary<Piece, Dictionary<(Square, Square), Movement>> CalculateLegalMovesForPosition(
+		public static Dictionary<Piece, Dictionary<(Square, Square), Movement>> CalculateLegalMovesForPosition(
 			Board board,
 			GameConditions gameConditions
 		) {

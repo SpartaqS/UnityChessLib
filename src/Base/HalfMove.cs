@@ -49,13 +49,13 @@ namespace UnityChess {
 
 			string moveText;
 			switch (Piece) {
-				case King when Move is CastlingMove: {
+				case King when Move.IsCastlingMove: {
 					moveText = Move.End.File == 3 ? $"O-O-O{suffix}" : $"O-O{suffix}";
 					break;
 				}
 				case Pawn: {
-					string promotionPiece = Move is PromotionMove promotionMove
-						? $"={pieceTypeToANSymbolMap[promotionMove.PromotionPiece.GetType()]}"
+					string promotionPiece = Move.IsPromotionMove
+						? $"={pieceTypeToANSymbolMap[Move.PromotionPiece.GetType()]}"
 						: string.Empty;
 
 					moveText = $"{pieceSymbol}{capture}{endSquare}{promotionPiece}{suffix}";

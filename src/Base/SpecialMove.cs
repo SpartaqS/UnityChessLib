@@ -1,8 +1,8 @@
-﻿namespace UnityChess {
-	public abstract class SpecialMove : Movement {
-		protected SpecialMove(Square piecePosition, Square end)
-			: base(piecePosition, end) { }
+﻿//namespace UnityChess {
+//	public abstract class SpecialMove : Movement {
+//		protected SpecialMove(Square piecePosition, Square end)
+//			: base(piecePosition, end) { }
 
-		public abstract void HandleAssociatedPiece(Board board);
-	}
-}
+//		public abstract void HandleAssociatedPiece(Board board);
+//	}
+//}

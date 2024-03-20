@@ -18,10 +18,10 @@ namespace UnityChess.Test {
 		[TestCase(ElectedPiece.Queen)]
 		public void HandleAssociatedPiece_PromotionMove_ElectedPieceGenerated(ElectedPiece election) {
 			Square expectedPosition = new Square(1, 8);
-			PromotionMove mpm = new PromotionMove(Square.Invalid, expectedPosition);
-			mpm.SetPromotionPiece(PromotionUtil.GeneratePromotionPiece(election, Side.White));
+			Movement movePromotionMove = Movement.PromotionMove(Square.Invalid, expectedPosition);
+			movePromotionMove.SetPromotionPiece(PromotionUtil.GeneratePromotionPiece(election, Side.White));
 
-			mpm.HandleAssociatedPiece(board);
+			movePromotionMove.HandleAssociatedPiece(board);
 
 			Assert.AreEqual(election.ToString(), board[expectedPosition]?.GetType().Name);
 		}

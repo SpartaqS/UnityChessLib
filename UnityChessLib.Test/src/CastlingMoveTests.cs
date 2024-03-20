@@ -17,7 +17,7 @@ namespace UnityChess.Test {
 			Square rookStartSquare = new Square(rookStartingFile, 1);
 			Rook rook = new Rook(Side.White);
 			board[rookStartSquare] = rook;
-			CastlingMove castlingMove = new CastlingMove(new Square(5, 1), new Square(7, 1), rookStartSquare);
+			Movement castlingMove = Movement.CastlingMove(new Square(5, 1), new Square(7, 1), rookStartSquare);
 
 			castlingMove.HandleAssociatedPiece(board);
 
