@@ -7,13 +7,13 @@
 		/// <summary>Creates a new Movement.</summary>
 		/// <param name="piecePosition">Position of piece being moved.</param>
 		/// <param name="end">Square which the piece will land on.</param>
-		public Movement(Square piecePosition, Square end) : this(piecePosition, end, new Square(-1,-1), false) { } //TEMP just to keep track of this constructor as it was used
+		public Movement(Square piecePosition, Square end) : this(piecePosition, end, new Square(-1,-1), MoveType.NormalMove) { } //TEMP just to keep track of this constructor as it was used
 
 		/// <summary>Copy constructor.</summary>
 		internal Movement(Movement move) : this(move.Start, move.End) { }
 
 		public bool Equals(Movement other) {
-			return Start == other.Start && End == other.End; 
+			return Start == other.Start && End == other.End && SpecialMoveSquare == other.SpecialMoveSquare && Type == other.Type && PromotionPiece == other.PromotionPiece; 
 		}
 
 		public override bool Equals(object obj) {
@@ -30,20 +30,19 @@
 
 		public override string ToString() => $"{Start}->{End}";
 
+
 		// results of converting class to struct:
-		public readonly bool IsSpecialMove;
+		public readonly MoveType Type;
+		public readonly bool IsSpecialMove => Type != MoveType.NormalMove;
 		public readonly Square SpecialMoveSquare;
 
-		public Movement(Square piecePosition, Square end, Square specialMoveSquare, bool isSpecialMove = false, bool isCastlingMove = false, bool isEnPassantMove = false, bool isPromotionMove = false)
+		public Movement(Square piecePosition, Square end, Square specialMoveSquare, MoveType moveType)
 		{
 			Start = piecePosition;
 			End = end;
-			IsSpecialMove = isSpecialMove;
 			SpecialMoveSquare = specialMoveSquare;
 			// set special move type based on needs
-			IsCastlingMove = isCastlingMove;
-			IsEnPassantMove = isEnPassantMove;
-			IsPromotionMove = isPromotionMove;
+			Type = moveType;
 			PromotionPiece = ElectedPiece.None;
 			PromotionPieceSide = Side.None;
 		}
@@ -72,6 +71,14 @@
 			}
 		}
 
+		public enum MoveType { 
+			NormalMove,
+			CastlingMove,
+			EnPassantMove,
+			PromotionMove
+		}
+
+
 		#region CastlingMove
 		/// <summary>Creates a new CastlingMove instance.</summary>
 		/// <param name="kingPosition">Position of the king to be castled.</param>
@@ -79,10 +86,10 @@
 		/// <param name="rookSquare">The square of the rook associated with the castling move.</param>
 		public static Movement CastlingMove(Square kingPosition, Square end, Square rookSquare)
 		{
-			return new Movement(kingPosition, end, rookSquare, true, true);
+			return new Movement(kingPosition, end, rookSquare, MoveType.CastlingMove);
 		}
 
-		public readonly bool IsCastlingMove;
+		public readonly bool IsCastlingMove => Type == MoveType.CastlingMove;
 
 		public readonly Square RookSquare => SpecialMoveSquare;
 
@@ -129,10 +136,10 @@
 		/// <param name="capturedPawnSquare">Square of the pawn that is being captured via en passant.</param>
 		public static Movement EnPassantMove(Square attackingPawnPosition, Square end, Square capturedPawnSquare)
 		{
-			return new Movement(attackingPawnPosition, end, capturedPawnSquare, true, false, true);
+			return new Movement(attackingPawnPosition, end, capturedPawnSquare, MoveType.EnPassantMove);
 		}
 
-		public readonly bool IsEnPassantMove;
+		public readonly bool IsEnPassantMove => Type == MoveType.EnPassantMove;
 
 		public readonly Square CapturedPawnSquare => SpecialMoveSquare;
 
@@ -153,10 +160,10 @@
 		/// <param name="end">Square which the promoting pawn is landing on.</param>
 		public static Movement PromotionMove(Square pawnPosition, Square end)
 		{
-			return new Movement(pawnPosition, end, end, true, false, false, true);
+			return new Movement(pawnPosition, end, end, MoveType.PromotionMove);
 		}
 
-		public readonly bool IsPromotionMove;
+		public readonly bool IsPromotionMove => Type == MoveType.PromotionMove;
 
 
 		/// <summary>Handles replacing the promoting pawn with the elected promotion piece.</summary>
@@ -186,8 +193,19 @@
 
 		public static Movement InvalidMove()
 		{
-			return new Movement(Square.Invalid, Square.Invalid, Square.Invalid);
+			return new Movement(Square.Invalid, Square.Invalid, Square.Invalid, MoveType.NormalMove);
 		}
+
+		/// <summary>
+		/// basic check if move is valid (enough to determine whether to discard it or not)
+		/// Special moves do have a special move square but regular moves do not use the special move square
+		/// </summary>
+		/// <returns></returns>
+		public bool IsValid()
+		{
+			return Start.IsValid() && End.IsValid() && (!IsSpecialMove || SpecialMoveSquare.IsValid());
+		}
+
 		public static bool operator ==(Movement m1, Movement m2)
 		{
 			return m1.Equals(m2);
