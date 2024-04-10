@@ -114,7 +114,7 @@ namespace UnityChess {
 				currentKingSquareBySide[pieceToMove.Owner] = move.End;
 			}
 
-			if (move.IsSpecialMove)
+			if (move.IsSpecialMove())
 			{
 				move.HandleAssociatedPiece(this);
 			}

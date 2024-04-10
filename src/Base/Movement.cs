@@ -33,7 +33,12 @@
 
 		// results of converting class to struct:
 		public readonly MoveType Type;
-		public readonly bool IsSpecialMove => Type != MoveType.NormalMove;
+
+		public bool IsSpecialMove()
+		{
+			return Type != MoveType.NormalMove;
+		}
+
 		public readonly Square SpecialMoveSquare;
 
 		public Movement(Square piecePosition, Square end, Square specialMoveSquare, MoveType moveType)
@@ -48,24 +53,24 @@
 		}
 
 		public void HandleAssociatedPiece(Board board) {
-			if (IsCastlingMove)
+			if (IsCastlingMove())
 			{
 				HandleAssociatedPieceCastlingMove(board);
 			}
-			else if (IsEnPassantMove)
+			else if (IsEnPassantMove())
 			{
 				HandleAssociatedPieceEnPassant(board);
 			}
-			else if (IsPromotionMove)
+			else if (IsPromotionMove())
 			{
 				HandleAssociatedPiecePromotionMove(board);
 			}
 
-			else if (IsSpecialMove)
+			else if (IsSpecialMove())
 			{
 				throw new System.Exception("HandleAssociatedPiece called without specifying what kind of special move it is");
 			}
-			else if (!IsSpecialMove)
+			else if (!IsSpecialMove())
 			{
 				throw new System.Exception("HandleAssociatedPiece called on a non-special move");
 			}
@@ -89,7 +94,10 @@
 			return new Movement(kingPosition, end, rookSquare, MoveType.CastlingMove);
 		}
 
-		public readonly bool IsCastlingMove => Type == MoveType.CastlingMove;
+		public bool IsCastlingMove()
+		{
+			return Type == MoveType.CastlingMove;
+		}
 
 		public readonly Square RookSquare => SpecialMoveSquare;
 
@@ -139,7 +147,10 @@
 			return new Movement(attackingPawnPosition, end, capturedPawnSquare, MoveType.EnPassantMove);
 		}
 
-		public readonly bool IsEnPassantMove => Type == MoveType.EnPassantMove;
+		public bool IsEnPassantMove()
+		{
+			return Type == MoveType.EnPassantMove;
+		}
 
 		public readonly Square CapturedPawnSquare => SpecialMoveSquare;
 
@@ -163,7 +174,10 @@
 			return new Movement(pawnPosition, end, end, MoveType.PromotionMove);
 		}
 
-		public readonly bool IsPromotionMove => Type == MoveType.PromotionMove;
+		public bool IsPromotionMove()
+		{
+			return Type == MoveType.PromotionMove;
+		}
 
 
 		/// <summary>Handles replacing the promoting pawn with the elected promotion piece.</summary>
@@ -203,7 +217,7 @@
 		/// <returns></returns>
 		public bool IsValid()
 		{
-			return Start.IsValid() && End.IsValid() && (!IsSpecialMove || SpecialMoveSquare.IsValid());
+			return Start.IsValid() && End.IsValid() && (!IsSpecialMove() || SpecialMoveSquare.IsValid());
 		}
 
 		public static bool operator ==(Movement m1, Movement m2)

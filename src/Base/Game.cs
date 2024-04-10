@@ -31,7 +31,7 @@ namespace UnityChess {
 			}
 
 			// if the SpecialMove was deemed valid, save its special properties
-			if (validatedMove.IsSpecialMove)
+			if (validatedMove.IsSpecialMove())
 				validatedMove = move;
 
 			//create new copy of previous current board, and execute the move on it
@@ -43,7 +43,7 @@ namespace UnityChess {
 			ConditionsTimeline.TryGetCurrent(out GameConditions conditionsBeforeMove); 
 			Side updatedSideToMove = conditionsBeforeMove.SideToMove.Complement();
 			bool causedCheck = Rules.IsPlayerInCheck(resultingBoard, updatedSideToMove);
-			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove.IsEnPassantMove;
+			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove.IsEnPassantMove();
 			
 			HalfMove halfMove = new HalfMove(boardBeforeMove[validatedMove.Start], validatedMove, capturedPiece, causedCheck);
 			GameConditions resultingGameConditions = conditionsBeforeMove.CalculateEndingConditions(boardBeforeMove, halfMove);
