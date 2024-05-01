@@ -139,5 +139,31 @@ namespace UnityChess {
 
 			return result;
 		}
+
+		public static List<Movement> UnpackMovementsToList(Dictionary<Piece, Dictionary<(Square, Square), Movement>> possibleMovesPerPiece)
+		{
+			List<Movement> movements = new List<Movement>();
+
+			foreach (Piece piece in possibleMovesPerPiece.Keys)
+			{
+				foreach (Movement move in possibleMovesPerPiece[piece].Values)
+				{
+					if (piece is Pawn)
+					{
+						if (move is PromotionMove)          // TODO: generate moves with promotions for each piece type that can be obtained via a promotion
+						{// pawn promotes: pick a promotion for it
+							Side currentSide = piece.Owner;
+							(move as PromotionMove).SetPromotionPiece(new Queen(currentSide));
+							movements.Add(move);
+							continue;
+						}
+
+					}
+					movements.Add(move);
+				}
+			}
+
+			return movements;
+		}
 	}
 }
