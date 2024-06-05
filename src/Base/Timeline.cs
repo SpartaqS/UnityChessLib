@@ -31,7 +31,16 @@ namespace UnityChess {
 			headIndexBacking = -1;
 			list = new List<T>();
 		}
-		
+
+		public Timeline(Timeline<T> timelineToShallowCopy) : base()
+		{
+			for (int i = 0; i < timelineToShallowCopy.list.Count; i++)
+			{
+				list.Add(timelineToShallowCopy.list[i]);
+			}
+			headIndexBacking = timelineToShallowCopy.headIndexBacking;
+		}
+
 		public void Add(T element) => AddNext(element);
 		
 		public List<T> GetStartToCurrent() => list.GetRange(0, headIndexBacking + 1);

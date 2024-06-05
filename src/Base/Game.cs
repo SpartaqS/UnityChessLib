@@ -24,6 +24,18 @@ namespace UnityChess {
 			};
 		}
 
+		/// <summary>
+		/// Creates shallow copies of all timelines
+		/// </summary>
+		/// <param name="gameToCopy"></param>
+		public Game(Game gameToCopy)
+		{
+			BoardTimeline = new Timeline<Board>(gameToCopy.BoardTimeline);
+			HalfMoveTimeline = new Timeline<HalfMove>(gameToCopy.HalfMoveTimeline);
+			ConditionsTimeline = new Timeline<GameConditions>(gameToCopy.ConditionsTimeline);
+			LegalMovesTimeline = new Timeline<Dictionary<Piece, Dictionary<(Square, Square), Movement>>>(gameToCopy.LegalMovesTimeline);
+		}
+
 		/// <summary>Executes passed move and switches sides; also adds move to history.</summary>
 		public bool TryExecuteMove(Movement move) {
 			if (!TryGetLegalMove(move.Start, move.End, out Movement validatedMove)) {
