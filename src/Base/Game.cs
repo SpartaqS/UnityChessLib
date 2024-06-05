@@ -44,13 +44,15 @@ namespace UnityChess {
 			Side updatedSideToMove = conditionsBeforeMove.SideToMove.Complement();
 			bool causedCheck = Rules.IsPlayerInCheck(resultingBoard, updatedSideToMove);
 			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove is EnPassantMove;
-			
+
+			bool causedThreeFoldRepetition = Rules.IsThreefoldRepetition(this);
+
 			HalfMove halfMove = new HalfMove(boardBeforeMove[validatedMove.Start], validatedMove, capturedPiece, causedCheck);
 			GameConditions resultingGameConditions = conditionsBeforeMove.CalculateEndingConditions(boardBeforeMove, halfMove);
 			ConditionsTimeline.AddNext(resultingGameConditions);
 
 			Dictionary<Piece, Dictionary<(Square, Square), Movement>> legalMovesByPiece
-				= CalculateLegalMovesForPosition(resultingBoard, resultingGameConditions);
+				= causedThreeFoldRepetition ? null : CalculateLegalMovesForPosition(resultingBoard, resultingGameConditions);
 
 			int numLegalMoves = GetNumLegalMoves(legalMovesByPiece);
 
@@ -58,7 +60,8 @@ namespace UnityChess {
 
 			halfMove.SetGameEndBools(
 				Rules.IsPlayerStalemated(resultingBoard, updatedSideToMove, numLegalMoves),
-				Rules.IsPlayerCheckmated(resultingBoard, updatedSideToMove, numLegalMoves)
+				Rules.IsPlayerCheckmated(resultingBoard, updatedSideToMove, numLegalMoves),
+				causedThreeFoldRepetition
 			);
 			HalfMoveTimeline.AddNext(halfMove);
 			

@@ -8,6 +8,7 @@ namespace UnityChess {
 		public readonly bool CapturedPiece;
 		public readonly bool CausedCheck;
 		public bool CausedStalemate { get; private set; }
+		public bool CausedThreeFoldRepetition { get; private set; }
 		public bool CausedCheckmate { get; private set; }
 		
 		private static readonly Dictionary<Type, string> pieceTypeToANSymbolMap = new Dictionary<Type, string> {
@@ -26,11 +27,13 @@ namespace UnityChess {
 			CausedCheck = causedCheck;
 			CausedCheckmate = default;
 			CausedStalemate = default;
+			CausedThreeFoldRepetition = default;
 		}
 
-		public void SetGameEndBools(bool causedStalemate, bool causedCheckmate) {
+		public void SetGameEndBools(bool causedStalemate, bool causedCheckmate, bool causedThreeFoldRepetition) {
 			CausedCheckmate = causedCheckmate;
 			CausedStalemate = causedStalemate;
+			CausedThreeFoldRepetition = causedThreeFoldRepetition;
 		}
 		
 		// TODO handle ambiguous piece moves.
