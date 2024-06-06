@@ -32,8 +32,9 @@ namespace UnityChess {
 			list = new List<T>();
 		}
 
-		public Timeline(Timeline<T> timelineToShallowCopy) : base()
+		public Timeline(Timeline<T> timelineToShallowCopy)
 		{
+			list = new List<T>();
 			for (int i = 0; i < timelineToShallowCopy.list.Count; i++)
 			{
 				list.Add(timelineToShallowCopy.list[i]);
