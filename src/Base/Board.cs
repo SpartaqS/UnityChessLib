@@ -155,6 +155,11 @@ namespace UnityChess {
 			return result;
 		}
 
+		/// <summary>
+		/// two boards are equal if and only if all their corresponding squares contain the same pieces
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
 		public override bool Equals(Object obj)
 		{
 			var other = obj as Board;
@@ -166,8 +171,27 @@ namespace UnityChess {
 			{
 				for (int rank = 1; rank <= 8; rank++)
 				{
-					if (this[file, rank] != other[file, rank])
-						return false;
+					Piece thisPiece = this[file, rank];
+					Piece otherPiece = other[file, rank];
+
+					if (thisPiece == null && otherPiece == null) // both squares are empty
+						continue;
+
+					if (thisPiece != null && otherPiece != null) // both squares are non-empty
+					{
+						if(thisPiece.Owner != otherPiece.Owner) // pieces are of different color
+							return false;
+
+						if (thisPiece.GetType().Name != otherPiece.GetType().Name) // pieces are of same color but different types
+							return false;
+
+						// both pieces are of the same color and type: they are the same
+						continue;
+
+					}
+
+					// one board has a piece on this square, but other does not, therefore they are different
+					return false;
 				}
 			}
 			return true;
