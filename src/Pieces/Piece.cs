@@ -35,43 +35,6 @@ namespace UnityChess {
 			Rook { Owner: Side.Black } => "♖",
 			_ => "."
 		};
-
-		public override bool Equals(System.Object obj)
-		{
-			var other = obj as Piece;
-			if (other == null)
-			{
-				return false;
-			}
-
-			return Owner == other.Owner && GetType().Name == other.GetType().Name;
-		}
-
-		public override int GetHashCode()
-		{
-			return HashCode.Combine(Owner, GetType().Name);
-		}
-
-		static public bool operator ==(Piece lPiece, Piece rPiece)
-		{
-			if (ReferenceEquals(lPiece, null))
-			{
-				if (ReferenceEquals(rPiece, null))
-				{
-					// null == null
-					return true;
-				}
-				// only left side is null
-				return false;
-			}
-			// Equals() haldes rBoard == null
-			return lPiece.Equals(rPiece);
-		}
-
-		static public bool operator !=(Piece lPiece, Piece rPiece)
-		{
-			return !(lPiece == rPiece);
-		}
 	}
 
 	public abstract class Piece<T> : Piece where T : Piece<T>, new() {
