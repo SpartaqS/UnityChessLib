@@ -33,6 +33,16 @@ namespace UnityChess {
 			new(-1, 2),
 			new(1, -2),
 			new(1, 2),
+			// for "patched" knight moves, the knight can move to any tile that is 2 tiles off in rank OR file
+			new(-2, -2),
+			new(-2, 0),
+			new(-2, 2),
+			new(2, -2),
+			new(2, 0),
+			new(2, 2),
+			new(0, -2),
+			new(0, 2),
+
 		};
 		
 		public static readonly Square[] SurroundingOffsets = {

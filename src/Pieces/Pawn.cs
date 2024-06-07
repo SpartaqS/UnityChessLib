@@ -65,7 +65,7 @@ namespace UnityChess {
 			ref Dictionary<(Square, Square), Movement> movesByStartEndSquares
 		) {
 			foreach (int fileOffset in adjacentFileOffsets) {
-				Square endSquare = position + new Square(fileOffset, Owner.ForwardDirection());
+				Square endSquare = position + new Square(fileOffset, 0); // for "patched" pawn attack, the pawn can capture pieces that are to the sides of it instead of diagonally to the sides
 				Movement testMove = new Movement(position, endSquare);
 
 				if (endSquare.IsValid()
@@ -90,7 +90,7 @@ namespace UnityChess {
 			Square enPassantEligibleSquare,
 			ref Dictionary<(Square, Square), Movement> movesByStartEndSquares
 		) {
-			int enPassantCaptureRank = Owner == Side.White ? 5 : 4;
+			int enPassantCaptureRank = Owner == Side.White ? 6 : 3; // for "patched" Pawn attack, en-passant can eb executed by pawn on rank 6 or 3
 			if (position.Rank != enPassantCaptureRank) {
 				return;
 			}
@@ -100,7 +100,7 @@ namespace UnityChess {
 				return;
 			}
 
-			Square capturedPawnSquare = enPassantEligibleSquare + new Square(0, -Owner.ForwardDirection());
+			Square capturedPawnSquare = enPassantEligibleSquare + new Square(0, -Owner.ForwardDirection()); // for "patched" Pawn attacks, the en-passant captured pawn is still in the same spot as in original rules
 			if (capturedPawnSquare.IsValid()
 			    && board[capturedPawnSquare] is Pawn capturedPawn
 			    && capturedPawn.Owner != Owner
