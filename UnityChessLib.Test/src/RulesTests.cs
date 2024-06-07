@@ -560,7 +560,7 @@ namespace UnityChess.Test {
 					Side.White => new Board(
 						(new Square(8, 1), new King(side)),
 						(new Square(7, 7), new King(side.Complement())),
-						(new Square(6, 2), new Knight(side.Complement())),
+						(new Square(6, 3), new Knight(side.Complement())),  // for "patched" knight and pawn moves, 6,3 is a smothered chekmate (not 6,2)
 						(new Square(7, 2), new Pawn(side)),
 						(new Square(8, 2), new Pawn(side)),
 						(new Square(7, 1), new Rook(side))
@@ -568,7 +568,7 @@ namespace UnityChess.Test {
 					Side.Black => new Board(
 						(new Square(8, 8), new King(side)),
 						(new Square(7, 2), new King(side.Complement())),
-						(new Square(6, 7), new Knight(side.Complement())),
+						(new Square(6, 6), new Knight(side.Complement())), // for "patched" knight and pawn moves, 6,6 is a smothered chekmate (not 6,7)
 						(new Square(7, 7), new Pawn(side)),
 						(new Square(8, 7), new Pawn(side)),
 						(new Square(7, 8), new Rook(side))
