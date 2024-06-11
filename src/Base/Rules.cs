@@ -53,6 +53,12 @@ namespace UnityChess {
 			return false;
 		}
 
+		public static bool Is50MovesDraw(GameConditions currentGameConditions)
+		{
+			// if 50 without a capture (or a pawn moving) have been made, 50 moves draw has occured
+			return currentGameConditions.HalfMoveClock >= 50;
+		}
+
 		private class BoardCount
 		{
 			public Board Board;
