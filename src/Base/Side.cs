@@ -3,9 +3,9 @@
 namespace UnityChess {
 	/// <summary>Used to describe which side's turn it currently is, and which side a piece belongs to.</summary>
 	public enum Side {
-		None,
-		Black,
-		White
+		None = 0,
+		Black = -1,
+		White = 1
 	}
 
 	public static class SideMethods {
