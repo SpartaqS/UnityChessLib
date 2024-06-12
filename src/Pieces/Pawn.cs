@@ -76,8 +76,8 @@ namespace UnityChess {
 						movesByStartEndSquares = new Dictionary<(Square, Square), Movement>();
 					}
 
-					bool amOnEnemyPawnRank = position.Rank == Owner.Complement().PawnRank();
-					movesByStartEndSquares[(testMove.Start, testMove.End)] = amOnEnemyPawnRank
+					bool isEndSquarePromotionSquare = endSquare.Rank == Owner.Complement().PawnRank() + Owner.ForwardDirection();
+					movesByStartEndSquares[(testMove.Start, testMove.End)] = isEndSquarePromotionSquare
 						? new PromotionMove(position, endSquare)
 						: new Movement(testMove);
 				}
