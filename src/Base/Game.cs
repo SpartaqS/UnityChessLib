@@ -172,11 +172,21 @@ namespace UnityChess {
 						if (move is PromotionMove)          // TODO: generate moves with promotions for each piece type that can be obtained via a promotion
 						{// pawn promotes: pick a promotion for it
 							Side currentSide = piece.Owner;
-							(move as PromotionMove).SetPromotionPiece(new Queen(currentSide));
-							movements.Add(move);
+							PromotionMove promoMoveQueen = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveBishop = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveKnight = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveRook = new PromotionMove(move.Start, move.End);
+
+							promoMoveQueen.SetPromotionPiece(new Queen(currentSide));
+							promoMoveBishop.SetPromotionPiece(new Bishop(currentSide));
+							promoMoveKnight.SetPromotionPiece(new Knight(currentSide));
+							promoMoveRook.SetPromotionPiece(new Rook(currentSide));
+							movements.Add(promoMoveQueen);
+							movements.Add(promoMoveBishop);
+							movements.Add(promoMoveKnight);
+							movements.Add(promoMoveRook);
 							continue;
 						}
-
 					}
 					movements.Add(move);
 				}
