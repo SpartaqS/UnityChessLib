@@ -141,7 +141,15 @@ namespace UnityChess {
 			for (int rank = 8; rank >= 1; --rank) {
 				for (int file = 1; file <= 8; ++file) {
 					Piece piece = this[file, rank];
-					result += piece.ToTextArt();
+
+					if (piece == null)
+					{
+						result += "....";
+					}
+					else
+					{
+						result += piece.ToTextArt();
+					}
 					result += file != 8
 						? "|"
 						: $"\t {rank}";
