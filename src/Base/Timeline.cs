@@ -24,6 +24,9 @@ namespace UnityChess {
 		} private int headIndexBacking;
 		
 		private readonly List<T> list;
+
+		// should not be used to modify the list
+		public List<T> GetListForRead() { return list; }
 		private int FutureElementsStartIndex => headIndexBacking + 1;
 		private int NumFutureElements => list.Count - FutureElementsStartIndex;
 

@@ -13,43 +13,33 @@ namespace UnityChess {
 			numLegalMoves <= 0 && !IsPlayerInCheck(board, player);
 
 		/// <summary>
-		/// Checks if three-fold repetition has happened
+		/// Checks if three-fold repetition has happened (current board is checked)
 		/// </summary>
 		/// <param name="game"></param>
 		/// <returns></returns>
 		public static bool IsThreefoldRepetition(Game game)
 		{
-			//TEMP for nwo just compare board, ignore game conditions
-			List<BoardCount> repetitionDict = new List<BoardCount>();
-
-			for (int i = 0; i < game.BoardTimeline.Count; i++)
+			if (!game.BoardTimeline.TryGetCurrent(out Board currentBoard))
 			{
-				Board aBoard = game.BoardTimeline[i];
+				throw new System.Exception("game: could not retrieve currentBoard");
+			}
 
-				bool needsAdding = true;
+			List<Board> boardTImelineAsList = game.BoardTimeline.GetListForRead();
 
-				for (int k = 0; k < repetitionDict.Count; k++)
+			int repetitionCount = 0;
+			foreach (Board elem in boardTImelineAsList)
+			{
+				if(elem == currentBoard)
 				{
+					repetitionCount++;
+					if(repetitionCount >= 3)
 					{
-						if (repetitionDict[k].Board == aBoard)
-						{
-							if (repetitionDict[k].Count >= 2)
-							{
-								return true;
-							}
-							repetitionDict[k].Count += 1;
-							needsAdding = false;
-							break;
-						}
-						
+						return true;
 					}
 				}
-
-				if(needsAdding)
-				{
-					repetitionDict.Add(new BoardCount(aBoard, 1));
-				}
 			}
+			
+
 			return false;
 		}
 
@@ -59,7 +49,7 @@ namespace UnityChess {
 			return currentGameConditions.HalfMoveClock >= 50;
 		}
 
-		private class BoardCount
+		public class BoardCount
 		{
 			public Board Board;
 			public int Count;
