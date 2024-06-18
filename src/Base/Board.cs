@@ -182,24 +182,10 @@ namespace UnityChess {
 					Piece thisPiece = this[file, rank];
 					Piece otherPiece = other[file, rank];
 
-					if (thisPiece == null && otherPiece == null) // both squares are empty
-						continue;
-
-					if (thisPiece != null && otherPiece != null) // both squares are non-empty
-					{
-						if(thisPiece.Owner != otherPiece.Owner) // pieces are of different color
-							return false;
-
-						if (thisPiece.GetType().Name != otherPiece.GetType().Name) // pieces are of same color but different types
-							return false;
-
-						// both pieces are of the same color and type: they are the same
-						continue;
-
+					if (!Piece.ArePiecesEqual(thisPiece, otherPiece))
+					{ // at least one square is different in two boards
+						return false;
 					}
-
-					// one board has a piece on this square, but other does not, therefore they are different
-					return false;
 				}
 			}
 			return true;

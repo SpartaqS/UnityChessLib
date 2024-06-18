@@ -35,6 +35,28 @@ namespace UnityChess {
 			Rook { Owner: Side.Black } => "♖",
 			_ => "."
 		};
+
+		public static bool ArePiecesEqual(Piece lPiece, Piece rPiece)
+		{
+			if (lPiece == null && rPiece == null) // both pieces are null (no piece)
+				return true;
+
+			if (lPiece != null && rPiece != null) // both squares are non-empty
+			{
+				if (lPiece.Owner != rPiece.Owner) // pieces are of different color
+					return false;
+
+				if (lPiece.GetType().Name != rPiece.GetType().Name) // pieces are of same color but different types
+					return false;
+
+				// both pieces are of the same color and type: they are the same
+				return true;
+
+			}
+
+			// one board has a piece on this square, but other does not, therefore they are different
+			return false;
+		}
 	}
 
 	public abstract class Piece<T> : Piece where T : Piece<T>, new() {
