@@ -17,8 +17,11 @@
 			Start = move.Start;
 			End = move.End;
 		}
-		
-		protected bool Equals(Movement other) => Start == other.Start && End == other.End;
+
+		protected virtual bool Equals(Movement other)
+		{
+			return Start == other.Start && End == other.End;
+		}
 
 		public override bool Equals(object obj) {
 			if (ReferenceEquals(null, obj)) return false;
