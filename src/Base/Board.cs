@@ -141,7 +141,15 @@ namespace UnityChess {
 			for (int rank = 8; rank >= 1; --rank) {
 				for (int file = 1; file <= 8; ++file) {
 					Piece piece = this[file, rank];
-					result += piece.ToTextArt();
+
+					if (piece == null)
+					{
+						result += "....";
+					}
+					else
+					{
+						result += piece.ToTextArt();
+					}
 					result += file != 8
 						? "|"
 						: $"\t {rank}";
@@ -153,6 +161,59 @@ namespace UnityChess {
 			result += "a b c d e f g h";
 
 			return result;
-		} 
+		}
+
+		/// <summary>
+		/// two boards are equal if and only if all their corresponding squares contain the same pieces
+		/// </summary>
+		/// <param name="obj"></param>
+		/// <returns></returns>
+		public override bool Equals(Object obj)
+		{
+			var other = obj as Board;
+			if(other == null)
+			{
+				return false;
+			}
+			for (int file = 1; file <= 8; file++)
+			{
+				for (int rank = 1; rank <= 8; rank++)
+				{
+					Piece thisPiece = this[file, rank];
+					Piece otherPiece = other[file, rank];
+
+					if (!Piece.ArePiecesEqual(thisPiece, otherPiece))
+					{ // at least one square is different in two boards
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(boardMatrix, currentKingSquareBySide);
+		}
+
+		static public bool operator==(Board lBoard, Board rBoard)
+		{
+			if(ReferenceEquals(lBoard, null)) {
+				if(ReferenceEquals(rBoard, null))
+				{
+					// null == null
+					return true;
+				}
+				// only left side is null
+				return false;
+			}
+			// Equals() haldes rBoard == null
+			return lBoard.Equals(rBoard);
+		}
+
+		static public bool operator!=(Board lBoard, Board rBoard)
+		{
+			return !(lBoard == rBoard);
+		}
 	}
 }

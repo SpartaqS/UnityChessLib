@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UnityChess {
 	/// <summary>Contains methods for checking legality of moves and board positions.</summary>
@@ -10,6 +11,55 @@ namespace UnityChess {
 		/// <summary>Checks if the player of the given side has been stalemated.</summary>
 		public static bool IsPlayerStalemated(Board board, Side player, int numLegalMoves) =>
 			numLegalMoves <= 0 && !IsPlayerInCheck(board, player);
+
+		/// <summary>
+		/// Checks if three-fold repetition has happened (current board is checked)
+		/// </summary>
+		/// <param name="game"></param>
+		/// <returns></returns>
+		public static bool IsThreefoldRepetition(Game game)
+		{
+			if (!game.BoardTimeline.TryGetCurrent(out Board currentBoard))
+			{
+				throw new System.Exception("game: could not retrieve currentBoard");
+			}
+
+			List<Board> boardTImelineAsList = game.BoardTimeline.GetListForRead();
+
+			int repetitionCount = 0;
+			foreach (Board elem in boardTImelineAsList)
+			{
+				if(elem == currentBoard)
+				{
+					repetitionCount++;
+					if(repetitionCount >= 3)
+					{
+						return true;
+					}
+				}
+			}
+			
+
+			return false;
+		}
+
+		public static bool Is50MovesDraw(GameConditions currentGameConditions)
+		{
+			// if 50 without a capture (or a pawn moving) have been made, 50 moves draw has occured
+			return currentGameConditions.HalfMoveClock >= 50;
+		}
+
+		public class BoardCount
+		{
+			public Board Board;
+			public int Count;
+
+			public BoardCount(Board board, int count)
+			{
+				Board = board;
+				Count = count;
+			}
+		}
 
 		/// <summary>Checks if the player of the given side is in check.</summary>
 		public static bool IsPlayerInCheck(Board board, Side player) =>

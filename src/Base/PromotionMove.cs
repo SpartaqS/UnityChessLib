@@ -28,5 +28,10 @@ namespace UnityChess {
 		public void SetPromotionPiece(Piece promotionPiece) {
 			PromotionPiece = promotionPiece;
 		}
+
+		protected override bool Equals(Movement other)
+		{// this is called after Base.Equals(onject obj) therefore other is guaranteed to be a PromotionMove as well
+			return base.Equals(other) && Piece.ArePiecesEqual(PromotionPiece, ((PromotionMove)other).PromotionPiece);
+		}
 	}
 }

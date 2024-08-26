@@ -24,6 +24,18 @@ namespace UnityChess {
 			};
 		}
 
+		/// <summary>
+		/// Creates shallow copies of all timelines
+		/// </summary>
+		/// <param name="gameToCopy"></param>
+		public Game(Game gameToCopy)
+		{
+			BoardTimeline = new Timeline<Board>(gameToCopy.BoardTimeline);
+			HalfMoveTimeline = new Timeline<HalfMove>(gameToCopy.HalfMoveTimeline);
+			ConditionsTimeline = new Timeline<GameConditions>(gameToCopy.ConditionsTimeline);
+			LegalMovesTimeline = new Timeline<Dictionary<Piece, Dictionary<(Square, Square), Movement>>>(gameToCopy.LegalMovesTimeline);
+		}
+
 		/// <summary>Executes passed move and switches sides; also adds move to history.</summary>
 		public bool TryExecuteMove(Movement move) {
 			if (!TryGetLegalMove(move.Start, move.End, out Movement validatedMove)) {
@@ -44,13 +56,18 @@ namespace UnityChess {
 			Side updatedSideToMove = conditionsBeforeMove.SideToMove.Complement();
 			bool causedCheck = Rules.IsPlayerInCheck(resultingBoard, updatedSideToMove);
 			bool capturedPiece = boardBeforeMove[validatedMove.End] != null || validatedMove is EnPassantMove;
-			
+
+			bool causedThreeFoldRepetition = Rules.IsThreefoldRepetition(this);
+
 			HalfMove halfMove = new HalfMove(boardBeforeMove[validatedMove.Start], validatedMove, capturedPiece, causedCheck);
 			GameConditions resultingGameConditions = conditionsBeforeMove.CalculateEndingConditions(boardBeforeMove, halfMove);
+
 			ConditionsTimeline.AddNext(resultingGameConditions);
 
+			bool caused50MovesDraw = Rules.Is50MovesDraw(resultingGameConditions);
+
 			Dictionary<Piece, Dictionary<(Square, Square), Movement>> legalMovesByPiece
-				= CalculateLegalMovesForPosition(resultingBoard, resultingGameConditions);
+				= causedThreeFoldRepetition || caused50MovesDraw ? null : CalculateLegalMovesForPosition(resultingBoard, resultingGameConditions);
 
 			int numLegalMoves = GetNumLegalMoves(legalMovesByPiece);
 
@@ -58,7 +75,9 @@ namespace UnityChess {
 
 			halfMove.SetGameEndBools(
 				Rules.IsPlayerStalemated(resultingBoard, updatedSideToMove, numLegalMoves),
-				Rules.IsPlayerCheckmated(resultingBoard, updatedSideToMove, numLegalMoves)
+				Rules.IsPlayerCheckmated(resultingBoard, updatedSideToMove, numLegalMoves),
+				causedThreeFoldRepetition,
+				caused50MovesDraw
 			);
 			HalfMoveTimeline.AddNext(halfMove);
 			
@@ -150,14 +169,24 @@ namespace UnityChess {
 				{
 					if (piece is Pawn)
 					{
-						if (move is PromotionMove)          // TODO: generate moves with promotions for each piece type that can be obtained via a promotion
-						{// pawn promotes: pick a promotion for it
+						if (move is PromotionMove)
+						{// generate moves with promotions for each piece type that can be obtained via a promotion
 							Side currentSide = piece.Owner;
-							(move as PromotionMove).SetPromotionPiece(new Queen(currentSide));
-							movements.Add(move);
+							PromotionMove promoMoveQueen = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveBishop = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveKnight = new PromotionMove(move.Start, move.End);
+							PromotionMove promoMoveRook = new PromotionMove(move.Start, move.End);
+
+							promoMoveQueen.SetPromotionPiece(new Queen(currentSide));
+							promoMoveBishop.SetPromotionPiece(new Bishop(currentSide));
+							promoMoveKnight.SetPromotionPiece(new Knight(currentSide));
+							promoMoveRook.SetPromotionPiece(new Rook(currentSide));
+							movements.Add(promoMoveQueen);
+							movements.Add(promoMoveBishop);
+							movements.Add(promoMoveKnight);
+							movements.Add(promoMoveRook);
 							continue;
 						}
-
 					}
 					movements.Add(move);
 				}
